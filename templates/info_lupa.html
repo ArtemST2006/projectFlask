@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div>
+  <div style="width: 100%; background-color: rgb(230, 235, 235);">
+      <div style="text-align: center">
+      <h1>{{oneplace.adress}}</h1>
+      </div>
+      {% if photos.photo1 %}
+  <div style="display: flex; justify-content: center">
+    <img src="/static/light_photo/photo1.jpg" style="width: 60%">
+  </div>
+  {% endif %}
+
+      {% if text1 %}
+       <p style="font-size: 30px; padding: 30px">{{ text1 }}</p>
+      {% endif %}
+
+      {% if photos.photo2 %}
+  <div style="display: flex; justify-content: center">
+    <img src="/static/light_photo/photo2.jpg" style="width: 60%">
+  </div>
+  {% endif %}
+
+      {% if text2 %}
+       <p style="font-size: 30px; padding: 30px">{{ text2 }}</p>
+      {% endif %}
+
+      {% if photos.photo3 %}
+  <div style="display: flex; justify-content: center">
+    <img src="/static/light_photo/photo3.jpg" style="width: 60%">
+  </div>
+  {% endif %}
+
+      {% if text3 %}
+       <p style="font-size: 30px; padding: 30px">{{ text3 }}</p>
+      {% endif %}
+
+      {% if photos.photo4 %}
+  <div style="display: flex; justify-content: center">
+    <img src="/static/light_photo/photo4.jpg" style="width: 60%">
+  </div>
+  {% endif %}
+
+      {% if text4 %}
+       <p style="font-size: 30px; padding: 30px">{{ text4 }}</p>
+      {% endif %}
+
+
+    <div>
+        <div style="display: flex; justify-content: center">
+            <img src="/static/light_photo/limaps.jpg" style="width: 60%">
+        </div>
+    Дата написания - {{oneplace.time}}
+    </div>
+
+
+  </div>
+</div>
+
+
+<br>
+<br>
+<br>
+<br>
+<div class="container">
+  {% for item in comments%}
+<div class="col-md6 border rounded">
+    <h3>{{ item.user.name }}</h3>
+    <div>
+        {{item.comm}}
+    </div>
+    <div>
+        Дата написания - {{item.time}}
+    </div>
+
+</div>
+{% endfor %}
+</div>
+
+
+<form action="" method="post">
+    {{ form.hidden_tag() }}
+  <div class="container">
+      <div>
+        <p style="width: 50%;">{{ form.comment(class="form-control") }}</p>
+        <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
+      </div>
+  </div>
+</form>
+
+
+
+
+
+{% endblock %}

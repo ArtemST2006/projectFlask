@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+{% if not current_user.is_authenticated %}
+    <h1>Зарегистрируйтесь пж</h1>
+{% else %}
+{% for item in place%}
+<div class="col-md6 border rounded">
+    <h2>{{item.adress}}</h2>
+    <div>
+        {{item.state[:100]}}
+    </div>
+    <div>
+        Дата написания - {{item.time}}
+    </div>
+    <div>
+    {% if current_user.is_authenticated and current_user.id == 1 %}
+
+        <a href="/add_place/{{ item.id }}" class="btn btn-warning">
+            Изменить
+        </a>
+        <a href="/news_delete/{{ item.id }}" class="btn btn-danger">
+            Удалить
+        </a>
+        {% endif %}
+        <a href="/zaaupa/{{ item.id }}" class="btn btn-success">
+            Подробнее
+        </a>
+    </div>
+
+</div>
+{% endfor %}
+</div>
+{% endif %}
+
+{% if current_user.id == 1 %}
+<a href="/add_place" class="btn btn-secondary" style="margin: 100px">Добавить место</a>
+{% endif %}
+{% endblock %}

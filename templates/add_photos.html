@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container" style="display: flex; justify-content: center;">
+<h1>Добавление Фотографий</h1>
+</div>
+<form action="" method="post" enctype="multipart/form-data">
+    {{ form.hidden_tag() }}
+    <div class="phphoto" style="display: flex; justify-content: center;">
+    <div class="card" style="width: 18rem; display: inline-block;margin-left: 30px" >
+        <img src="/static/light_photo/photo1.jpg" class="card-img-top" alt="...">
+        <div class="card-body">
+            <h5 class="card-title">Выберите фотографию</h5>
+            <p class="card-text">На ней должен быть запечетлёл самый значимый момент, связанный с этим местом.</p>
+            <p>
+                <input type="file" class="form-control-file" id="photo1" name="file1">
+            </p>
+        </div>
+    </div>
+
+  <div class="card" style="width: 18rem; display: inline-block;margin-left: 30px">
+        <img src="/static/light_photo/photo2.jpg" class="card-img-top" alt="...">
+        <div class="card-body">
+            <h5 class="card-title">Выберите фотографию</h5>
+            <p class="card-text">На ней должен быть запечетлёл самый значимый момент, связанный с этим местом.</p>
+            <p>
+                <input type="file" class="form-control-file" id="photo2" name="file2">
+            </p>
+        </div>
+    </div>
+
+  <div class="card" style="width: 18rem; display: inline-block;margin-left: 30px">
+        <img src="/static/light_photo/photo3.jpg" class="card-img-top" alt="...">
+        <div class="card-body">
+            <h5 class="card-title">Выберите фотографию</h5>
+            <p class="card-text">На ней должен быть запечетлёл самый значимый момент, связанный с этим местом.</p>
+            <p>
+                <input type="file" class="form-control-file" id="photo3" name="file3">
+            </p>
+        </div>
+    </div>
+
+  <div class="card" style="width: 18rem; display: inline-block;margin-left: 30px">
+        <img src="/static/light_photo/photo4.jpg" class="card-img-top" alt="...">
+        <div class="card-body">
+            <h5 class="card-title">Выберите фотографию</h5>
+            <p class="card-text">На ней должен быть запечетлёл самый значимый момент, связанный с этим местом.</p>
+            <p>
+                <input type="file" class="form-control-file" id="photo4" name="file4">
+            </p>
+        </div>
+    </div>
+  </div>
+    <br>
+        <br>
+        <br>
+        <br>
+    <div class="container" style="display: flex; justify-content: center;">
+<p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
+    {{message}}
+    </div>
+
+</form>
+
+{% endblock %}
