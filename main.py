@@ -2,6 +2,8 @@
 
 from os import abort
 from flask import Flask, render_template, redirect, request, make_response, jsonify
+from flask_restful import reqparse, abort, Api, Resource
+
 
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from forms.user import LoginForm, RegisterForm, CommentsForm
@@ -10,6 +12,7 @@ from data.users import User
 from data.place import Place, PlaseForm, PhotoForm
 from data.photo import Photo
 from data.comments import Comments
+from data import news_resources
 
 from io import BytesIO
 
@@ -17,6 +20,7 @@ import requests
 from PIL import Image
 
 app = Flask(__name__)
+api = Api(app)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -214,7 +218,7 @@ def edit_news(id):
     if request.method == "GET":
         db_sess = db_session.create_session()
         place = db_sess.query(Place).filter(Place.id == id,
-                                          ).first()
+                                            ).first()
         if place:
             form.adress.data = place.adress
             form.content.data = place.state
@@ -246,6 +250,10 @@ def add_place():
 
         place.adress = form.adress.data
         place.state = form.content.data
+        # text = request.files['filetxt']
+        # print(text.read())
+        # if text:
+        #    place.state = text.read()
 
         db_sess.add(place)
 
@@ -274,6 +282,22 @@ def add_photos(id):
         photo.photo2 = save_picture_post(f2)
         photo.photo3 = save_picture_post(f3)
         photo.photo4 = save_picture_post(f4)
+
+        if not photo.photo3:
+            photo.photo3 = photo.photo4
+            photo.photo4 = None
+
+        if not photo.photo2:
+            photo.photo2 = photo.photo3
+            photo.photo3 = photo.photo4
+            photo.photo4 = None
+
+        if not photo.photo1:
+            photo.photo1 = photo.photo2
+            photo.photo2 = photo.photo3
+            photo.photo3 = photo.photo4
+            photo.photo4 = None
+
 
         photo.id_place = id
         db_sess.add(photo)
@@ -356,9 +380,10 @@ def infopov(id):
 
 def main():
     db_session.global_init("db/travel.db")
-    # app.register_blueprint(news_api.blueprint)
+    api.add_resource(news_resources.NewsListResource, '/api/place')
+    api.add_resource(news_resources.NewsResource, '/api/place/<int:place_id>')
 
-    app.run(port=8091, host='127.0.0.1', debug=True, threaded=False)
+    app.run(port=8091, host='127.0.0.1')
 
 
 if __name__ == '__main__':

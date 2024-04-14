@@ -25,7 +25,7 @@ class Place(SqlAlchemyBase, SerializerMixin):
 
 class PlaseForm(FlaskForm, SerializerMixin):
     adress = StringField('Адрес', validators=[DataRequired()])
-    content = TextAreaField("Содержание")
+    content = TextAreaField("Напишите ")
     submit = SubmitField('Далее')
 
 
