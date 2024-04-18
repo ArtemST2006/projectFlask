@@ -115,11 +115,11 @@ def give_indexs(count, text):
 def make_state(adress):
     try:
         wikipedia.set_lang('ru')
-        silka = wikipedia.page(adress).references
+        silka = wikipedia.page(adress).fullurl
         s = wikipedia.summary(adress, sentences=5)
-        return s
+        return s, silka
     except Exception:
-        return None
+        return None, None
 
 
 @app.route('/logout')
@@ -260,7 +260,9 @@ def add_place():
 
         place.adress = form.adress.data
         place.state = form.content.data
-        place.wiki = make_state(form.adress.data)
+        st, sl = make_state(form.adress.data)
+        place.wiki = st
+        place.ssilka = sl
         # text = request.files['filetxt']
         # print(text.read())
         # if text:
