@@ -18,6 +18,8 @@ class Place(SqlAlchemyBase, SerializerMixin):
                            primary_key=True, autoincrement=True)
     adress = sqlalchemy.Column(sqlalchemy.String)
     state = sqlalchemy.Column(sqlalchemy.String)
+    wiki = sqlalchemy.Column(sqlalchemy.String)
+    ssilka = sqlalchemy.Column(sqlalchemy.String)
     time = sqlalchemy.Column(sqlalchemy.DateTime, default=datetime.datetime.now)
 
     comments = orm.relationship("Comments", back_populates='place')

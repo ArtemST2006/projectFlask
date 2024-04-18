@@ -51,7 +51,13 @@
     <div>
         <div style="display: flex; justify-content: center">
             <img src="/static/light_photo/limaps.jpg" style="width: 60%">
-        </div>
+    </div>
+
+    {% if oneplace.wiki %}
+    <div>
+        {{ oneplace.wiki }}
+    </div>
+    {% endif %}
     Дата написания - {{oneplace.time}}
     </div>
 

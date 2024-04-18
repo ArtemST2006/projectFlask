@@ -1,9 +1,9 @@
 # noinspection PyUnresolvedReferences
-
+import pprint
+import wikipedia
 from os import abort
 from flask import Flask, render_template, redirect, request, make_response, jsonify
-from flask_restful import reqparse, abort, Api, Resource
-
+from flask_restful import abort, Api
 
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from forms.user import LoginForm, RegisterForm, CommentsForm
@@ -31,7 +31,7 @@ def save_picture_post(filename):
 
 
 def map_my_chose(file_name, number):
-    k = Image.open(BytesIO(
+    Image.open(BytesIO(
         file_name.read())).convert('RGB').save(f'static/light_photo/photo{number}.jpg')
 
 
@@ -81,7 +81,7 @@ def make_image(adresses):
     response = requests.get(map_api_server, params=map_params)
 
     try:
-        k = Image.open(BytesIO(
+        Image.open(BytesIO(
             response.content)).convert('RGB').save('static/maper.jpg')
     except Exception:
         pass
@@ -110,6 +110,16 @@ def give_indexs(count, text):
         return lis
     except Exception:
         return [text, False, False, False]
+
+
+def make_state(adress):
+    try:
+        wikipedia.set_lang('ru')
+        silka = wikipedia.page(adress).references
+        s = wikipedia.summary(adress, sentences=5)
+        return s
+    except Exception:
+        return None
 
 
 @app.route('/logout')
@@ -188,7 +198,7 @@ def make_one_map(adress):
     response = requests.get(map_api_server, params=map_params)
 
     try:
-        k = Image.open(BytesIO(
+        Image.open(BytesIO(
             response.content)).convert('RGB').save('static/light_photo/limaps.jpg')
     except Exception:
         pass
@@ -250,6 +260,7 @@ def add_place():
 
         place.adress = form.adress.data
         place.state = form.content.data
+        place.wiki = make_state(form.adress.data)
         # text = request.files['filetxt']
         # print(text.read())
         # if text:
@@ -298,7 +309,6 @@ def add_photos(id):
             photo.photo3 = photo.photo4
             photo.photo4 = None
 
-
         photo.id_place = id
         db_sess.add(photo)
         db_sess.commit()
@@ -342,22 +352,22 @@ def infopov(id):
     photos = db_sess.query(Photo).filter(Photo.id_place == id).first()
     if photos.photo1:
         count += 1
-        k = Image.open(BytesIO(
+        Image.open(BytesIO(
             photos.photo1)).convert('RGB').save('static/light_photo/photo1.jpg')
 
     if photos.photo4:
         count += 1
-        k = Image.open(BytesIO(
+        Image.open(BytesIO(
             photos.photo4)).convert('RGB').save('static/light_photo/photo4.jpg')
 
     if photos.photo2:
         count += 1
-        k = Image.open(BytesIO(
+        Image.open(BytesIO(
             photos.photo2)).convert('RGB').save('static/light_photo/photo2.jpg')
 
     if photos.photo3:
         count += 1
-        k = Image.open(BytesIO(
+        Image.open(BytesIO(
             photos.photo3)).convert('RGB').save('static/light_photo/photo3.jpg')
 
     texsts = give_indexs(count, one_placer.state)
@@ -383,7 +393,7 @@ def main():
     api.add_resource(news_resources.NewsListResource, '/api/place')
     api.add_resource(news_resources.NewsResource, '/api/place/<int:place_id>')
 
-    app.run(port=8091, host='127.0.0.1')
+    app.run(port=8092, host='127.0.0.1')
 
 
 if __name__ == '__main__':

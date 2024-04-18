@@ -15,7 +15,7 @@
         Дата написания - {{item.time}}
     </div>
     <div>
-    {% if current_user.is_authenticated and current_user.id == 1 %}
+    {% if current_user.is_authenticated and current_user.id == 3 %}
 
         <a href="/add_place/{{ item.id }}" class="btn btn-warning">
             Изменить
@@ -34,7 +34,7 @@
 </div>
 {% endif %}
 
-{% if current_user.id == 1 %}
+{% if current_user.id == 3 %}
 <a href="/add_place" class="btn btn-secondary" style="margin: 100px">Добавить место</a>
 {% endif %}
 {% endblock %}
