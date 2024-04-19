@@ -24,6 +24,7 @@ api = Api(app)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 login_manager = LoginManager()
 login_manager.init_app(app)
+CURRENT_ADDRESS_FOR_WIKI = ''
 
 
 def save_picture_post(filename):
@@ -36,6 +37,7 @@ def map_my_chose(file_name, number):
 
 
 def get_coords_of_name(name):
+    global CURRENT_ADDRESS_FOR_WIKI
     try:
         geocoder_api_server = "http://geocode-maps.yandex.ru/1.x/"
 
@@ -47,6 +49,8 @@ def get_coords_of_name(name):
         response = requests.get(geocoder_api_server, params=geocoder_params)
 
         json_response = response.json()
+        CURRENT_ADDRESS_FOR_WIKI = json_response["response"]['GeoObjectCollection']['featureMember'][0]['GeoObject'][
+            'metaDataProperty']['GeocoderMetaData']['Address']['Components'][-1]['name']
 
         toponym = json_response["response"]["GeoObjectCollection"][
             "featureMember"][0]["GeoObject"]
@@ -55,6 +59,7 @@ def get_coords_of_name(name):
 
         return str(dolg) + ',' + str(shir)
     except Exception:
+        CURRENT_ADDRESS_FOR_WIKI = ''
         return ''
 
 
@@ -115,8 +120,9 @@ def give_indexs(count, text):
 def make_state(adress):
     try:
         wikipedia.set_lang('ru')
-        silka = wikipedia.page(adress).fullurl
-        s = wikipedia.summary(adress, sentences=5)
+        s = wikipedia.summary(CURRENT_ADDRESS_FOR_WIKI, sentences=5)
+        silka = wikipedia.page(adress).url
+
         return s, silka
     except Exception:
         return None, None
@@ -200,8 +206,9 @@ def make_one_map(adress):
     try:
         Image.open(BytesIO(
             response.content)).convert('RGB').save('static/light_photo/limaps.jpg')
+        return True
     except Exception:
-        pass
+        return False
 
 
 @app.errorhandler(404)
@@ -260,9 +267,15 @@ def add_place():
 
         place.adress = form.adress.data
         place.state = form.content.data
-        st, sl = make_state(form.adress.data)
+        k = make_one_map(place.adress)
+        place.current_name = CURRENT_ADDRESS_FOR_WIKI
+        st, sl = make_state(place.current_name)
+
         place.wiki = st
         place.ssilka = sl
+
+        if k:
+            place.map_photo = open('static/light_photo/limaps.jpg', 'rb').read()
         # text = request.files['filetxt']
         # print(text.read())
         # if text:
@@ -347,8 +360,11 @@ def infopov(id):
     db_sess = db_session.create_session()
     one_placer = db_sess.query(Place).filter(Place.id == id).first()
     comments = db_sess.query(Comments).filter(Comments.id_place == id)
+    map_photo = one_placer.map_photo
+    if map_photo:
+        Image.open(BytesIO(
+            map_photo)).convert('RGB').save('static/light_photo/limaps.jpg')
 
-    make_one_map(one_placer.adress)
     count = 0
 
     photos = db_sess.query(Photo).filter(Photo.id_place == id).first()
@@ -387,7 +403,7 @@ def infopov(id):
         db_sess.commit()
     return render_template('info_lupa.html', title='Подробнее', form=form, oneplace=one_placer,
                            photos=photos, comments=comments, text1=texsts[0], text2=texsts[1],
-                           text3=texsts[2], text4=texsts[3])
+                           text3=texsts[2], text4=texsts[3], map_photo=map_photo)
 
 
 def main():

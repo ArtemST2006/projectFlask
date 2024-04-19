@@ -49,13 +49,20 @@
 
 
     <div>
+
+        {% if map_photo %}
         <div style="display: flex; justify-content: center">
             <img src="/static/light_photo/limaps.jpg" style="width: 60%">
     </div>
+        {% endif %}
 
     {% if oneplace.wiki %}
-    <div>
-        {{ oneplace.wiki }}
+    <div style="background-color: rgb(218, 223, 227);">
+        <div style="margin-left: 30px; margin-top: 30px; margin-left: 30px; ; margin-bottom: 30px;">
+        <h5>Wikipedia.</h5>
+        {{ oneplace.wiki }}<br>
+        <a href='{{ oneplace.ssilka }}' target="_blank">Читать больше</a>
+        </div>
     </div>
     {% endif %}
     Дата написания - {{oneplace.time}}
