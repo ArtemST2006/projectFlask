@@ -1,12 +1,13 @@
-{% extends "base.html" %}
+{% extends "base2.html" %}
 
 {% block content %}
 <div class="container">
 {% if not current_user.is_authenticated %}
     <h1>Зарегистрируйтесь пж</h1>
 {% else %}
+    <br>
 {% for item in place%}
-<div class="col-md6 border rounded">
+<div class="col-md6 border rounded" style="background-color: rgba(255, 255, 255, 0.90); margin-top: 20px;">
     <h2>{{item.adress}}</h2>
     <div>
         {{item.state[:100]}}

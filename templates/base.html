@@ -28,7 +28,7 @@
           <a class="nav-link" href="/list_place" style="color: black;">Места</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="/list_place" style="color: black;">Карта</a>
+          <a class="nav-link" href="/#id_maper" style="color: black;">Карта</a>
         </li>
       </ul>
     </div>
@@ -36,10 +36,10 @@
         {% if current_user.is_authenticated %}
     <a class="navbar-brand" href="/logout" style="color: black;">{{ current_user.name }}</a>
 {% else %}
-    <p>
-        <a class="btn btn-primary " href="/register">Зарегистрироваться</a>
+    <div style="display: flex; justify-content: center;">
+        <a class="btn btn-primary " href="/register" style="margin-right: 10px">Зарегистрироваться</a>
         <a class="btn btn-success" href="/login">Войти</a>
-    </p>
+    </div>
 {% endif %}
     </nav>
 </header>
