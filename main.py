@@ -36,7 +36,7 @@ def map_my_chose(file_name, number):
         file_name.read())).convert('RGB').save(f'static/light_photo/photo{number}.jpg')
 
 
-def get_coords_of_name(name):
+def get_coords_of_name(name):  # координаты по названию
     global CURRENT_ADDRESS_FOR_WIKI
     try:
         geocoder_api_server = "http://geocode-maps.yandex.ru/1.x/"
@@ -63,7 +63,7 @@ def get_coords_of_name(name):
         return ''
 
 
-def make_image(adresses):
+def make_image(adresses):  # одна большая карта
     lis = []
     for adres in adresses:
         try:
@@ -117,7 +117,7 @@ def give_indexs(count, text):
         return [text, False, False, False]
 
 
-def make_state(adress):
+def make_state(adress):  # википедия
     try:
         wikipedia.set_lang('ru')
         s = wikipedia.summary(CURRENT_ADDRESS_FOR_WIKI, sentences=5)
@@ -136,7 +136,7 @@ def logout():
 
 
 @app.route("/")
-def index():
+def index():  # главная страница
     db_sess = db_session.create_session()
     place_adress = db_sess.query(Place)
     make_image(place_adress)
@@ -150,7 +150,7 @@ def load_user(user_id):
 
 
 @app.route('/login', methods=['GET', 'POST'])
-def login():
+def login():  # лоогин
     form = LoginForm()
     if form.validate_on_submit():
         db_sess = db_session.create_session()
@@ -165,7 +165,7 @@ def login():
 
 
 @app.route('/register', methods=['GET', 'POST'])
-def reqister():
+def reqister():  # регистрация
     form = RegisterForm()
     if form.validate_on_submit():
         if form.password.data != form.password_again.data:
@@ -189,7 +189,7 @@ def reqister():
     return render_template('register.html', title='Регистрация', form=form)
 
 
-def make_one_map(adress):
+def make_one_map(adress):  # делаем карту одного места
     point = get_coords_of_name('+'.join(adress.split()))
 
     map_params = {
@@ -222,7 +222,7 @@ def bad_request(_):
 
 
 @app.route('/list_place')
-def list_place():
+def list_place():  # все места
     db_sess = db_session.create_session()
     place = db_sess.query(Place)
     return render_template('many_place.html', place=place)
@@ -230,7 +230,7 @@ def list_place():
 
 @app.route('/add_place/<int:id>', methods=['GET', 'POST'])
 @login_required
-def edit_news(id):
+def edit_news(id):  # изменение
     form = PlaseForm()
     if request.method == "GET":
         db_sess = db_session.create_session()
@@ -259,7 +259,7 @@ def edit_news(id):
 
 @app.route('/add_place', methods=['GET', 'POST'])
 @login_required
-def add_place():
+def add_place():  # добавить место
     form = PlaseForm()
     if form.validate_on_submit():
         db_sess = db_session.create_session()
@@ -268,7 +268,7 @@ def add_place():
         current_ad = db_sess.query(Place).filter(Place.adress == form.adress.data).first()
         if current_ad:
             return render_template('add_place.html', messenge='Уже есть такое место', title='Добавление места',
-                           form=form)
+                                   form=form)
 
         place.adress = form.adress.data
         place.state = form.content.data
@@ -283,9 +283,9 @@ def add_place():
             place.map_photo = open('static/light_photo/limaps.jpg', 'rb').read()
 
         text = request.files['filetxt']
-        print(text.read())
         if text:
-            place.state = text.read()
+            srtka = text.read().decode('utf-8')
+            place.state = srtka
 
         db_sess.add(place)
 
@@ -299,7 +299,7 @@ def add_place():
 
 @app.route('/add_photos/<int:id>', methods=['GET', 'POST'])
 @login_required
-def add_photos(id):
+def add_photos(id):  # фото
     form = PhotoForm()
     if form.validate_on_submit():
         db_sess = db_session.create_session()
@@ -339,7 +339,7 @@ def add_photos(id):
 
 @app.route('/news_delete/<int:id>', methods=['GET', 'POST'])
 @login_required
-def place_delete(id):
+def place_delete(id):  # удалить место
     db_sess = db_session.create_session()
     place = db_sess.query(Place).filter(Place.id == id,
                                         ).first()
@@ -362,7 +362,7 @@ def place_delete(id):
 
 @app.route('/zaaupa/<int:id>', methods=['GET', 'POST'])
 @login_required
-def infopov(id):
+def infopov(id):  # подробнее о месте
     db_sess = db_session.create_session()
     one_placer = db_sess.query(Place).filter(Place.id == id).first()
     comments = db_sess.query(Comments).filter(Comments.id_place == id)
