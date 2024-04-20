@@ -253,7 +253,7 @@ def edit_news(id):
             abort(404)
     return render_template('add_place.html',
                            title='Редактирование',
-                           form=form
+                           form=form, messenge=False
                            )
 
 
@@ -264,6 +264,11 @@ def add_place():
     if form.validate_on_submit():
         db_sess = db_session.create_session()
         place = Place()
+
+        current_ad = db_sess.query(Place).filter(Place.adress == form.adress.data).first()
+        if current_ad:
+            return render_template('add_place.html', messenge='Уже есть такое место', title='Добавление места',
+                           form=form)
 
         place.adress = form.adress.data
         place.state = form.content.data
@@ -276,10 +281,11 @@ def add_place():
 
         if k:
             place.map_photo = open('static/light_photo/limaps.jpg', 'rb').read()
-        # text = request.files['filetxt']
-        # print(text.read())
-        # if text:
-        #    place.state = text.read()
+
+        text = request.files['filetxt']
+        print(text.read())
+        if text:
+            place.state = text.read()
 
         db_sess.add(place)
 
@@ -288,7 +294,7 @@ def add_place():
 
         return redirect(f'/add_photos/{id_last_place}')
     return render_template('add_place.html', title='Добавление места',
-                           form=form)
+                           form=form, messenge=False)
 
 
 @app.route('/add_photos/<int:id>', methods=['GET', 'POST'])
@@ -371,22 +377,22 @@ def infopov(id):
     if photos.photo1:
         count += 1
         Image.open(BytesIO(
-            photos.photo1)).convert('RGB').save('static/light_photo/photo1.jpg')
+            photos.photo1)).convert('RGB').save('static/run_photo/photo1.jpg')
 
     if photos.photo4:
         count += 1
         Image.open(BytesIO(
-            photos.photo4)).convert('RGB').save('static/light_photo/photo4.jpg')
+            photos.photo4)).convert('RGB').save('static/run_photo/photo4.jpg')
 
     if photos.photo2:
         count += 1
         Image.open(BytesIO(
-            photos.photo2)).convert('RGB').save('static/light_photo/photo2.jpg')
+            photos.photo2)).convert('RGB').save('static/run_photo/photo2.jpg')
 
     if photos.photo3:
         count += 1
         Image.open(BytesIO(
-            photos.photo3)).convert('RGB').save('static/light_photo/photo3.jpg')
+            photos.photo3)).convert('RGB').save('static/run_photo/photo3.jpg')
 
     texsts = give_indexs(count, one_placer.state)
     n = 4 - len(texsts)
