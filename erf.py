@@ -1,56 +1,49 @@
-import pprint
+
+from flask import Flask, render_template, redirect, request, make_response, jsonify
 from io import BytesIO
-# Этот класс поможет нам сделать картинку из потока байт
 
 import requests
 from PIL import Image
 
-
-def get_coords_of_name(name):
-    try:
-        geocoder_api_server = "http://geocode-maps.yandex.ru/1.x/"
-
-        geocoder_params = {
-            'geocode': name,
-            "apikey": "40d1649f-0493-4b70-98ba-98533de7710b",
-            "format": "json"
-        }
-        response = requests.get(geocoder_api_server, params=geocoder_params)
-
-        json_response = response.json()
-
-        toponym = json_response["response"]["GeoObjectCollection"][
-            "featureMember"][0]["GeoObject"]
-        toponym_coodrinates = toponym["Point"]["pos"]
-        dolg, shir = toponym_coodrinates.split(" ")
-
-        return str(dolg) + ',' + str(shir)
-    except Exception:
-        return ''
+app = Flask(__name__)
 
 
-def make_image(adresses):
-    lis = []
-    for adres in adresses:
-        point = get_coords_of_name(adres)
-        lis.append(point)
+@app.route('/')
+@app.route('/add_ph', methods=['GET', 'POST'])
+def sample_file_upload():
+    if request.method == 'GET':
+        return f'''<!doctype html>
+                            <html lang="en">
+                              <head>
+                                <meta charset="utf-8">
+                                <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+                                 <link rel="stylesheet"
+                                 href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css"
+                                 integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1"
+                                 crossorigin="anonymous">
+            
+                                <title>Пример загрузки файла</title>
+                              </head>
+                              <body>
+                                <h1>Загрузим файл</h1>
+                                <form method="post" enctype="multipart/form-data">
+                                   <div class="form-group">
+                                        <label for="photo">Выберите файл</label>
+                                        <input type="file" class="form-control-file" id="photo" name="file">
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Отправить</button>
+                                </form>
+                              </body>
+                            </html>'''
+    elif request.method == 'POST':
+        f = request.files['file']
+        print(f.read())
+        return "Форма отправлена"
 
-    lis = list(filter(lambda x: x != '', lis))
-    points = '~'.join(list(map(lambda x: x + ',pmgnm', lis)))
-    print(points)
-    map_params = {
-        'll': '85.386195,2C57.216735',
-        "spn": '50.005,50.005',
-        "l": "map",
-        'pt': f'{points}'
-    }
 
-    map_api_server = "http://static-maps.yandex.ru/1.x/"
-
-    response = requests.get(map_api_server, params=map_params)
-    print(response)
-    Image.open(BytesIO(
-        response.content)).show()
+def main():
+    app.run(port=8097, host='127.0.0.1')
 
 
-make_image(['Рязань Пушкина'])
+if __name__ == '__main__':
+    main()
